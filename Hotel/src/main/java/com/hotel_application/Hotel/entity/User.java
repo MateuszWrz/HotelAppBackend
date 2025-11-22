@@ -4,13 +4,17 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
+import java.time.LocalDateTime;
+import java.util.Collection;
 import java.util.List;
-import java.util.Optional;
+
 
 @Entity
 @Table(name = "users")
-public class User {
+public class User implements UserDetails{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -36,7 +40,17 @@ public class User {
 
     private String phoneNumber;
 
-    @OneToMany(mappedBy = "user")
+    @Column(name="verification_code")
+    private String verificationCode;
+
+    @Column(name="verification_expiration")
+    private LocalDateTime verificationCodeExpireAt;
+
+    @Column(name="account_enabled")
+    private boolean enabled;
+
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
     private List<Reservation> reservations;
 
@@ -75,6 +89,7 @@ public class User {
     public String getPassword() {
         return password;
     }
+
 
     public void setPassword(String password) {
         this.password = password;
@@ -118,5 +133,72 @@ public class User {
 
     public void setZipCode(String zipCode) {
         this.zipCode = zipCode;
+    }
+
+    public String getVerificationCode() {
+        return verificationCode;
+    }
+
+    public void setVerificationCode(String verificationCode) {
+        this.verificationCode = verificationCode;
+    }
+
+    public LocalDateTime getVerificationCodeExpireAt() {
+        return verificationCodeExpireAt;
+    }
+
+    public void setVerificationCodeExpireAt(LocalDateTime verificationCodeExpireAt) {
+        this.verificationCodeExpireAt = verificationCodeExpireAt;
+    }
+
+
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
+    }
+
+    public List<Reservation> getReservations() {
+        return reservations;
+    }
+
+    public void setReservations(List<Reservation> reservations) {
+        this.reservations = reservations;
+    }
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return List.of();
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+        @Override
+    public String getUsername() {
+        return "";
+    }
+
+    public User(String email, String password) {
+        this.email = email;
+        this.password = password;
+    }
+
+    public User() {
     }
 }

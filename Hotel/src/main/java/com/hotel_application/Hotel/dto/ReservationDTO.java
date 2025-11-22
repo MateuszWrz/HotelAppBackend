@@ -1,4 +1,4 @@
-package com.hotel_application.Hotel.entity.dto;
+package com.hotel_application.Hotel.dto;
 
 import com.hotel_application.Hotel.entity.Reservation;
 

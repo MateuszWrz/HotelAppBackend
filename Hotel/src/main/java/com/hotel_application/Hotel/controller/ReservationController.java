@@ -2,7 +2,7 @@ package com.hotel_application.Hotel.controller;
 
 import com.hotel_application.Hotel.entity.Reservation;
 import com.hotel_application.Hotel.entity.User;
-import com.hotel_application.Hotel.entity.dto.ReservationDTO;
+import com.hotel_application.Hotel.dto.ReservationDTO;
 import com.hotel_application.Hotel.request.ReservationRequest;
 import com.hotel_application.Hotel.service.ReservationService;
 import com.hotel_application.Hotel.service.UserService;
@@ -35,11 +35,12 @@ public class ReservationController {
 
         List<Reservation> reservations = reservationService.getUserReservation(user);
 
-        List<ReservationDTO> dtos = reservations.stream()
+        List<ReservationDTO> dto
+                = reservations.stream()
                 .map(ReservationDTO::new)
                 .collect(Collectors.toList());
 
-        return ResponseEntity.ok(dtos);
+        return ResponseEntity.ok(dto);
     }
 
     @GetMapping("/my/reservations/history")
@@ -49,11 +50,11 @@ public class ReservationController {
 
         List<Reservation> reservations = reservationService.getUserReservation(user);
 
-        List<ReservationDTO> dtos = reservations.stream()
+        List<ReservationDTO> dto = reservations.stream()
                 .map(ReservationDTO::new)
                 .collect(Collectors.toList());
 
-        return ResponseEntity.ok(dtos);
+        return ResponseEntity.ok(dto);
     }
 
 

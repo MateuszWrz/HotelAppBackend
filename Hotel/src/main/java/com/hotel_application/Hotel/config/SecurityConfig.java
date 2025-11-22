@@ -36,7 +36,7 @@ public class SecurityConfig {
         return http.csrf(customizer -> customizer.disable()).
                 authorizeHttpRequests(request -> request
                         .requestMatchers("/login", "/register" ).anonymous()
-                        .requestMatchers("/hotels/**","hotel/**").permitAll()
+                        .requestMatchers("/hotels/**","/hotel/**","/verify", "/verify/**","/resend","/resend/**").permitAll()
                         .anyRequest().authenticated()).
                 httpBasic(Customizer.withDefaults()).
 //                httpBasic(AbstractHttpConfigurer::disable).
