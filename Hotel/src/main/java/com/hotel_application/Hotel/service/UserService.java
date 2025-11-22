@@ -1,53 +1,15 @@
 package com.hotel_application.Hotel.service;
-
 import com.hotel_application.Hotel.entity.User;
 import com.hotel_application.Hotel.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 
 @Service
 public class UserService {
-
     @Autowired
-    private  PasswordEncoder passwordEncoder;
-    @Autowired
-    private  UserRepository userRepository;
-    @Autowired
-    private JWTService jwtService;
-    @Autowired
-    private AuthenticationManager authenticationManager;
-
-
-    public User register(User user){
-        if(userRepository.findByEmail(user.getEmail()).isPresent()){
-            throw new RuntimeException("Użytkownik o podanym adresie email już istnieje");
-        }
-        if(user.getPassword().length()<4){
-            throw new RuntimeException("Hasło musi mieć conajmniej 4 znaki");
-        }
-
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-        return userRepository.save(user);
-    }
-
-
-    public String verify(User user) {
-        Authentication authentication = authenticationManager.authenticate(
-            new UsernamePasswordAuthenticationToken(user.getEmail(), user.getPassword()));
-        if (!authentication.isAuthenticated()) {
-            throw new BadCredentialsException("Niepoprawny email lub hasło");
-        }
-        return jwtService.generateToken(user.getEmail());
-    }
-
+    private UserRepository userRepository;
 
     public User findByEmail(String email){
         return userRepository.findByEmail(email).orElseThrow(()->
