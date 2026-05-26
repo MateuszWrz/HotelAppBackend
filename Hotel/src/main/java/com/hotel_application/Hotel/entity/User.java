@@ -8,6 +8,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -39,6 +40,10 @@ public class User implements UserDetails{
     private String zipCode;
 
     private String phoneNumber;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    @JsonIgnore
+    private List<FavoriteHotel> favorites = new ArrayList<>();
 
     @Column(name="verification_code")
     private String verificationCode;
@@ -162,6 +167,14 @@ public class User implements UserDetails{
 
     public void setReservations(List<Reservation> reservations) {
         this.reservations = reservations;
+    }
+
+    public List<FavoriteHotel> getFavorites() {
+        return favorites;
+    }
+
+    public void setFavorites(List<FavoriteHotel> favorites) {
+        this.favorites = favorites;
     }
 
     @Override

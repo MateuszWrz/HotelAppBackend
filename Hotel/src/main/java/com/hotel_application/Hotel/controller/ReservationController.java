@@ -10,12 +10,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @RestController
@@ -33,10 +33,9 @@ public class ReservationController {
         String email = authentication.getName();
         User user = userService.findByEmail(email);
 
-        List<Reservation> reservations = reservationService.getUserReservation(user);
+        List<Reservation> reservations = reservationService.getActiveUserReservations(user);
 
-        List<ReservationDTO> dto
-                = reservations.stream()
+        List<ReservationDTO> dto = reservations.stream()
                 .map(ReservationDTO::new)
                 .collect(Collectors.toList());
 
@@ -48,7 +47,7 @@ public class ReservationController {
         String email = authentication.getName();
         User user = userService.findByEmail(email);
 
-        List<Reservation> reservations = reservationService.getUserReservation(user);
+        List<Reservation> reservations = reservationService.getHistoryUserReservations(user);
 
         List<ReservationDTO> dto = reservations.stream()
                 .map(ReservationDTO::new)
@@ -59,7 +58,7 @@ public class ReservationController {
 
 
     @PostMapping("/reservations")
-    public ResponseEntity <Reservation> createReservation(Authentication auth, @RequestBody ReservationRequest request) {
+    public ResponseEntity <?> createReservation(Authentication auth, @RequestBody ReservationRequest request) {
         String email = auth.getName();
         User user = userService.findByEmail(email);
 
@@ -70,6 +69,20 @@ public class ReservationController {
                 request.getCheckOutDate()
         );
 
+        if(reservation == null){
+            Map<String, String> body = new HashMap<>();
+            body.put("error", "Pokój jest już zarezerwowany w tym terminie");
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(body);
+        }
+
+
         return ResponseEntity.status(HttpStatus.CREATED).body(reservation);
+    }
+
+    @DeleteMapping("/reservations/{id}")
+    public ResponseEntity<Void> cancelReservation(@PathVariable Long id, Authentication auth) {
+        User user = userService.findByEmail(auth.getName());
+        reservationService.cancelReservation(id, user.getEmail());
+        return ResponseEntity.ok().build();
     }
 }

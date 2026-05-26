@@ -1,6 +1,7 @@
 package com.hotel_application.Hotel.repository;
 
 import com.hotel_application.Hotel.entity.Hotel;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -10,6 +11,6 @@ import java.util.Optional;
 @Repository
 public interface HotelRepository extends JpaRepository<Hotel, Long> {
     List<Hotel> findByCity(String city);
-
+    List<Hotel> findDistinctByCityStartingWithIgnoreCase(String city, Pageable pageable);
     Optional<Hotel> findById(Long id);
 }

@@ -28,6 +28,9 @@ public class Reservation {
     private LocalDate checkInDate;
     private LocalDate checkOutDate;
 
+    @Enumerated(EnumType.STRING)
+    private ReservationStatus status = ReservationStatus.ACTIVE;
+
     private double totalPrice;
 
     public LocalDate getCheckInDate() {
@@ -76,6 +79,14 @@ public class Reservation {
 
     public void setTotalPrice(double totalPrice) {
         this.totalPrice = totalPrice;
+    }
+
+    public ReservationStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(ReservationStatus status) {
+        this.status = status;
     }
 
     public User getUser() {

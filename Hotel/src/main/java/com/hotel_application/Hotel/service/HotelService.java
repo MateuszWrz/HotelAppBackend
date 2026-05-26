@@ -1,11 +1,16 @@
 package com.hotel_application.Hotel.service;
 
+import com.hotel_application.Hotel.dto.HotelWithPriceDTO;
 import com.hotel_application.Hotel.entity.Hotel;
 import com.hotel_application.Hotel.repository.HotelRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import com.hotel_application.Hotel.entity.Room;
 
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Service
@@ -22,7 +27,15 @@ public class HotelService {
     }
 
     public List<Hotel> findByCity(String city){
-        return hotelRepository.findByCity(city);
+        List<Hotel> hotels = hotelRepository.findByCity(city);
+        hotels.forEach(hotel -> {
+            BigDecimal minPrice = hotel.getRooms().stream()
+                    .map(Room::getPricePerNight)
+                    .min(BigDecimal::compareTo)
+                    .orElse(null);
+            hotel.setLowestPrice(minPrice);
+        });
+        return hotels;
     }
 
     public List<Hotel> findAll(){
@@ -47,14 +60,28 @@ public class HotelService {
         return hotelRepository.save(hotel);
     }
 
-//    public List<Room> getAvailableRooms(Long hotelId, LocalDate checkIn, LocalDate checkOut) {
-//        if (checkIn.isAfter(checkOut)) {
-//            throw new IllegalArgumentException("Check-in date must be before check-out date");
-//        }
-//        if (checkIn.isBefore(LocalDate.now())) {
-//            throw new IllegalArgumentException("Check-in date cannot be in the past");
-//        }
-//
-//        return roomService.getAvailableRooms(hotelId, checkIn, checkOut);
-//    }
+    public List<String> searchCities(String query) {
+
+        if (query == null || query.length() < 2) {
+            return List.of();
+        }
+
+        Pageable limit = PageRequest.of(0, 10);
+
+        return hotelRepository
+                .findDistinctByCityStartingWithIgnoreCase(query, limit)
+                .stream()
+                .map(Hotel::getCity)
+                .distinct()
+                .toList();
+    }
+
+    public HotelWithPriceDTO getHotelWithLowestPrice(Long hotelId) {
+        Hotel hotel = hotelRepository.findById(hotelId)
+                .orElseThrow(() -> new RuntimeException("Hotel nie znaleziony"));
+
+        BigDecimal lowestPrice = roomService.getLowestPriceByHotelId(hotelId);
+
+        return new HotelWithPriceDTO(hotel.getId(), hotel.getName(), lowestPrice);
+    }
 }

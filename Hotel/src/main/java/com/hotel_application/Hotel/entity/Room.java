@@ -20,6 +20,9 @@ public class Room {
 
   private BigDecimal pricePerNight;
 
+  @Column(name = "max_guests")
+  private int maxGuests;
+
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name="hotel_id")
   @JsonBackReference
@@ -67,5 +70,14 @@ public class Room {
 
     public void setHotel(Hotel hotel) {
         this.hotel = hotel;
+    }
+
+    public int getMaxGuests() {
+        return maxGuests;
+    }
+
+
+    public void setMaxGuests(int maxGuests) {
+        this.maxGuests = maxGuests;
     }
 }

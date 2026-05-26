@@ -32,7 +32,7 @@ public class AuthController {
     public ResponseEntity<?> registerUser(@RequestBody RegisterUserDto userDto) {
         try {
             authService.register(userDto);
-            return ResponseEntity.ok("Na podany adres email został wysłany kod weryfikacyjny");
+            return ResponseEntity.ok("Na podany adres email został wysłany link aktywacyjny");
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
         } catch (Throwable e) {
@@ -55,7 +55,7 @@ public class AuthController {
     @PostMapping("/verify")
     public ResponseEntity<VerifyResponse> verifyUser(@RequestBody VerifyUserDto dto) {
         try {
-            VerifyResponse response = authService.verifyUser(dto.getToken(), dto.getEmail());
+            VerifyResponse response = authService.verifyUser(dto.getToken());
             return ResponseEntity.ok(response);
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest().body(new VerifyResponse("error", e.getMessage()));
@@ -71,6 +71,8 @@ public class AuthController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
+
+
 
 
 }
