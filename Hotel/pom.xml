@@ -9,9 +9,9 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.hotel-application</groupId>
-	<artifactId>Hotel</artifactId>
+	<artifactId>hotel</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>Hotel</name>
+	<name>hotel</name>
 	<description>Hotel backend application</description>
 	<url/>
 	<licenses>
@@ -48,8 +48,8 @@
 		</dependency>
 
 		<dependency>
-			<groupId>org.${DB_USERNAME}ql</groupId>
-			<artifactId>${DB_USERNAME}ql</artifactId>
+			<groupId>org.postgresql</groupId>
+			<artifactId>postgresql</artifactId>
 			<scope>runtime</scope>
 		</dependency>
 		<dependency>
