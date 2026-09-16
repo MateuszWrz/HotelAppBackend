@@ -31,3 +31,5 @@ build/
 
 ### VS Code ###
 .vscode/
+Hotel/docker-compose.yml
+Hotel/replace-secrets.txt
